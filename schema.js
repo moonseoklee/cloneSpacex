@@ -9,7 +9,7 @@ const {
   GraphQLSchema
 } = require('graphql');
 
-// Launch Type
+//Launch Type
 const LaunchType = new GraphQLObjectType({
   name: 'Launch',
   fields: () => ({
@@ -23,7 +23,6 @@ const LaunchType = new GraphQLObjectType({
 });
 
 //로켓 타입
-
 const RocketType = new GraphQLObjectType({
     name: 'Rocket',
     fields: () => ({

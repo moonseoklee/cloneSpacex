@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component,Fragment } from 'react'
 import gql from 'graphql-tag'
 import {Query} from 'react-apollo';
 import {Link} from 'react-router-dom';
+import classNames from 'classnames';
 
 const LAUNCHES_QUERY = gql`
 query LauncheQuer($flight_number: Int!) {
@@ -12,17 +13,52 @@ query LauncheQuer($flight_number: Int!) {
     launch_success
     launch_date_local
     launch_success
-
+    rocket{
+      rocket_id
+      rocket_name
+      rocket_type
+    }
   }
 }
 `;
 
 export class Launch extends Component {
     render() {
+      let {flight_number} = this.props.match.params;
+      flight_number = parseInt(flight_number);
+
+      console.log(flight_number)
+
         return (
-            <div>
-                <h1>Launch</h1>
-            </div>
+            <Fragment>
+                <Query query = {LAUNCHES_QUERY} variables={{flight_number}}>
+                  {
+                    ({loading,error,data})=>{
+                      if(loading) return <h4>loading...</h4>
+                      if(error) return <h4>fxxx err</h4>
+                      
+                      const {mission_name,flight_number,launch_year,launch_success,rocket:{
+                        rocket_id,rocket_name,rocket_type}} = data.launch;
+                      
+
+                      return <div>
+                        <h1 className="display-4 my-3"><span className="text-dark">Mission: </span>{mission_name}</h1>
+                        <h4 className="list-group">
+                          <ul>
+                          <li className="list-group-item">FlightNumber:{flight_number}</li>
+                          <li className="list-group-item">Launchyear:{launch_year}</li>
+                          <li className="list-group-item">SuccessOrNot<span className={classNames({
+                            'text-success':launch_success,
+                            'text-danger':!launch_success
+                          })}> {launch_success?'yes' : 'no'}</span></li>
+                          </ul>
+                        </h4>
+                      </div>
+                    } 
+                  }
+                </Query>
+                
+            </Fragment>
         )
     }
 }
